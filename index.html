@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>タイピングゲーム</title>
+    <style>
+        #game-container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        #word {
+            font-size: 36px;
+            margin: 20px 0;
+        }
+
+        #user-input {
+            font-size: 24px;
+            width: 200px;
+        }
+
+        #score, #timer {
+            font-size: 18px;
+        }
+
+        #reset-btn {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>タイピングゲーム</h1>
+        <p id="word"></p>
+        <input type="text" id="user-input" autofocus>
+        <p id="score">スコア: <span id="score-value">0</span></p>
+        <p id="timer">時間: <span id="timer-value">60</span> 秒</p>
+        <button id="reset-btn" onclick="resetGame()">リセット</button>
+    </div>
+    <script>
+        // ゲームの単語リスト
+        const words = [
+            "apple",
+            "banana",
+            "cherry",
+            "dog",
+            "elephant",
+            "fox",
+            "grape",
+            "horse",
+            "ice cream",
+            "jellyfish"
+        ];
+
+        let currentWordIndex = 0;
+        let score = 0;
+        let timer = 60;
+        let timerInterval;
+
+        const wordElement = document.getElementById("word");
+        const userInput = document.getElementById("user-input");
+        const scoreValue = document.getElementById("score-value");
+        const timerValue = document.getElementById("timer-value");
+
+        // ゲームの初期化
+        function initializeGame() {
+            currentWordIndex = 0;
+            score = 0;
+            timer = 60;
+            updateScore();
+            updateTimer();
+            showNextWord();
+            userInput.addEventListener("input", checkInput);
+            startTimer();
+        }
+
+        // 次の単語を表示
+        function showNextWord() {
+            wordElement.textContent = words[currentWordIndex];
+        }
+
+        // 入力の正誤をチェック
+        function checkInput() {
+            if (userInput.value.toLowerCase() === words[currentWordIndex].toLowerCase()) {
+                score++;
+                updateScore();
+                userInput.value = "";
+                currentWordIndex++;
+                if (currentWordIndex >= words.length) {
+                    endGame();
+                } else {
+                    showNextWord();
+                }
+            }
+        }
+
+        // スコアの更新
+        function updateScore() {
+            scoreValue.textContent = score;
+        }
+
+        // タイマーの開始
+        function startTimer() {
+            timerInterval = setInterval(function() {
+                timer--;
+                updateTimer();
+                if (timer <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        // タイマーの更新
+        function updateTimer() {
+            timerValue.textContent = timer;
+        }
+
+        // ゲームの終了
+        function endGame() {
+            clearInterval(timerInterval);
+            userInput.removeEventListener("input", checkInput);
+            userInput.disabled = true;
+        }
+
+        // ゲームのリセット
+        function resetGame() {
+            clearInterval(timerInterval);
+            userInput.disabled = false;
+            userInput.value = "";
+            initializeGame();
+        }
+
+        // ゲームの初期化
+        initializeGame();
+    </script>
+</body>
+</html>
